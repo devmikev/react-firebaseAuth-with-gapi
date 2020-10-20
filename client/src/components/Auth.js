@@ -20,9 +20,8 @@ function Auth() {
     if (user && window.gapi) {
       window.gapi.client
         .init({
-          apiKey: "AIzaSyC44qFjxnSRS5blbrdapLwcd_DT0BPPnd4",
-          clientId:
-            "460847483630-m4gvd4euf2hc982rc3hdpe78t8daqveg.apps.googleusercontent.com",
+          apiKey: process.env.REACT_APP_GAPI_API_KEY,
+          clientId: process.env.REACT_APP_GAPI_CLIENT_ID,
           discoveryDocs: [
             "https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest",
           ],
