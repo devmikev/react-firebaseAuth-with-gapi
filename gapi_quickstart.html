@@ -42,7 +42,9 @@
        *  On load, called to load the auth2 library and API client library.
        */
       function handleClientLoad() {
-        gapi.load('client:auth2', initClient);
+        // gapi.load('client:auth2', initClient);
+        gapi.load('client', initClient);
+
       }
 
       /**
@@ -50,23 +52,42 @@
        *  listeners.
        */
       function initClient() {
-        gapi.client.init({
-          apiKey: API_KEY,
-          clientId: CLIENT_ID,
-          discoveryDocs: DISCOVERY_DOCS,
-          scope: SCOPES
-        }).then(function () {
-          // Listen for sign-in state changes.
-          gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+        const config =  {
+        response_type: 'permission',
+        scope: SCOPES,
+        client_id: CLIENT_ID,
+        login_hint: 'dummydevmv@gmail.com',
+        prompt: 'none',
+      }
+      gapi.auth2.authorize(config, function(response) {
+        console.log(response)
+        // No need to `setToken`, it's done for you by auth2.
+        // let calConfig = {discoveryDocs} // only of google calendar
+        // window.gapi.client.init(calConfig).then(function() {
+        //   // then execute a calendar call:
+        //   window.gapi.client.calendar.events.list({'calendarId': 'primary'})
+        // })
+      })
 
-          // Handle the initial sign-in state.
-          updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-          authorizeButton.onclick = handleAuthClick;
-          signoutButton.onclick = handleSignoutClick;
-          sendEmailButton.onclick = sendEmailHandler;
-        }, function(error) {
-          appendPre(JSON.stringify(error, null, 2));
-        });
+        // gapi.client.init({
+        //   apiKey: API_KEY,
+        //   clientId: CLIENT_ID,
+        //   discoveryDocs: DISCOVERY_DOCS,
+        //   scope: SCOPES
+        // }).then(function () {
+        //   console.log(gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse())
+        //   // ya29.a0AfH6SMD4ZiwFvl68y-sUmIUnwN5hCtdi8WAaASUSZBk5YW6OtKts4fjaJ08adwWndH2H3iyHw_BfagHbK_oS2bGabAIFRGj7feYk0eccavvZyKH4F8srDURjWFN4iFbNSUYzv8iAW7AQJHRz-MZVux1vJWMq1OdRziU
+        //   // ya29.a0AfH6SMD4ZiwFvl68y-sUmIUnwN5hCtdi8WAaASUSZBk5YW6OtKts4fjaJ08adwWndH2H3iyHw_BfagHbK_oS2bGabAIFRGj7feYk0eccavvZyKH4F8srDURjWFN4iFbNSUYzv8iAW7AQJHRz-MZVux1vJWMq1OdRziU
+        //   // Listen for sign-in state changes.
+        //   gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+        //   // Handle the initial sign-in state.
+        //   updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+        //   authorizeButton.onclick = handleAuthClick;
+        //   signoutButton.onclick = handleSignoutClick;
+        //   sendEmailButton.onclick = sendEmailHandler;
+        // }, function(error) {
+        //   appendPre(JSON.stringify(error, null, 2));
+        // });
       }
 
       /**
@@ -101,52 +122,52 @@
       }
 
       function sendEmailHandler(e) {
-        // const message =
-        // "From: dev.mikev@gmail.com\r\n" + 
-        // "To: dummydevmv@gmail.com\r\n" +
-        // "Subject: As basic as it gets\r\n\r\n" +
-        // "This is the plain text body of the message.  Note the blank line between the header information and the body of the message.";
+        const message =
+        "From: dev.mikev@gmail.com\r\n" + 
+        "To: dummydevmv@gmail.com\r\n" +
+        "Subject: As basic as it gets\r\n\r\n" +
+        "This is the plain text body of the message.  Note the blank line between the header information and the body of the message.";
 
 
-        // // The body needs to be base64url encoded.
-        // const encodedMessage = btoa(message)
+        // The body needs to be base64url encoded.
+        const encodedMessage = btoa(message)
 
-        // const reallyEncodedMessage = encodedMessage.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+        const reallyEncodedMessage = encodedMessage.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 
-        // gapi.client.gmail.users.messages.send({
-        //     userId: 'me',
-        //     resource: {
-        //         // same response with any of these
-        //         raw: reallyEncodedMessage
-        //         // raw: encodedMessage
-        //         // raw: message
-        //     }
-        // }).then(function () { console.log("done!")});
+        gapi.client.gmail.users.messages.send({
+            userId: 'me',
+            resource: {
+                // same response with any of these
+                raw: reallyEncodedMessage
+                // raw: encodedMessage
+                // raw: message
+            }
+        }).then(function () { console.log("done!")});
         
-        var accessToken = 'ya29.a0AfH6SMAa1uX8aN8wFgzte1BxDi4fxlo5JEy4WE98qVF8DLX_p8RXKhSwcTqtv2ljAGPq_d6W1LAYC5EXjyizJENxtZeDMISjn_Qe-8OmHVWN0rjn8IXMBltM8c84-DMIZ3KU_F3P6xMYzzkzWn8HsIN_5XrKWFZPQ_wu';
-        // Base64-encode the mail and make it URL-safe
-        // (replace all '+' with '-' and all '/' with '_')
-        var encodedMail = btoa([
-          'From: sender@gmail.com\r\n',
-          'To: dev.mikev@gmail.com\r\n',
-          'Subject: Subject Text\r\n\r\n',
+        // var accessToken = 'ya29.a0AfH6SMAa1uX8aN8wFgzte1BxDi4fxlo5JEy4WE98qVF8DLX_p8RXKhSwcTqtv2ljAGPq_d6W1LAYC5EXjyizJENxtZeDMISjn_Qe-8OmHVWN0rjn8IXMBltM8c84-DMIZ3KU_F3P6xMYzzkzWn8HsIN_5XrKWFZPQ_wu';
+        // // Base64-encode the mail and make it URL-safe
+        // // (replace all '+' with '-' and all '/' with '_')
+        // var encodedMail = btoa([
+        //   'From: sender@gmail.com\r\n',
+        //   'To: dev.mikev@gmail.com\r\n',
+        //   'Subject: Subject Text\r\n\r\n',
 
-          'Message Text'
-        ].join('')).replace(/\+/g, '-').replace(/\//g, '_');
+        //   'Message Text'
+        // ].join('')).replace(/\+/g, '-').replace(/\//g, '_');
 
-        $.ajax({
-          method: 'POST',
-          url: 'https://www.googleapis.com/gmail/v1/users/me/messages/send',
-          headers: {
-            'Authorization': 'Bearer ' + accessToken,
-            'Content-Type': 'application/json'
-          },
-          data: JSON.stringify({
-            'raw': encodedMail
-          })
-        });
+        // $.ajax({
+        //   method: 'POST',
+        //   url: 'https://www.googleapis.com/gmail/v1/users/me/messages/send',
+        //   headers: {
+        //     'Authorization': 'Bearer ' + accessToken,
+        //     'Content-Type': 'application/json'
+        //   },
+        //   data: JSON.stringify({
+        //     'raw': encodedMail
+        //   })
+        // });
 
-        console.log('Email sent!')
+        // console.log('Email sent!')
       }
 
       /**
