@@ -15,6 +15,11 @@
 
     <pre id="content" style="white-space: pre-wrap;"></pre>
 
+    <script
+    src="https://code.jquery.com/jquery-3.5.1.min.js"
+    integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+    crossorigin="anonymous"></script>
+
     <script type="text/javascript">
       // Client ID and API key from the Developer Console
       var CLIENT_ID = '460847483630-m4gvd4euf2hc982rc3hdpe78t8daqveg.apps.googleusercontent.com';
@@ -96,27 +101,52 @@
       }
 
       function sendEmailHandler(e) {
-        const message =
-"From: my.email@gmail.com\r\n" + 
-"To: my.email@gmail.com\r\n" +
-"Subject: As basic as it gets\r\n\r\n" +
-"This is the plain text body of the message.  Note the blank line between the header information and the body of the message.";
+        // const message =
+        // "From: dev.mikev@gmail.com\r\n" + 
+        // "To: dummydevmv@gmail.com\r\n" +
+        // "Subject: As basic as it gets\r\n\r\n" +
+        // "This is the plain text body of the message.  Note the blank line between the header information and the body of the message.";
 
 
-// The body needs to be base64url encoded.
-const encodedMessage = btoa(message)
+        // // The body needs to be base64url encoded.
+        // const encodedMessage = btoa(message)
 
-const reallyEncodedMessage = encodedMessage.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+        // const reallyEncodedMessage = encodedMessage.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 
-gapi.client.gmail.users.messages.send({
-    userId: 'me',
-    requestBody: {
-        // same response with any of these
-        raw: reallyEncodedMessage
-        // raw: encodedMessage
-        // raw: message
-    }
-}).then(function () { console.log("done!")});
+        // gapi.client.gmail.users.messages.send({
+        //     userId: 'me',
+        //     resource: {
+        //         // same response with any of these
+        //         raw: reallyEncodedMessage
+        //         // raw: encodedMessage
+        //         // raw: message
+        //     }
+        // }).then(function () { console.log("done!")});
+        
+        var accessToken = 'ya29.a0AfH6SMAa1uX8aN8wFgzte1BxDi4fxlo5JEy4WE98qVF8DLX_p8RXKhSwcTqtv2ljAGPq_d6W1LAYC5EXjyizJENxtZeDMISjn_Qe-8OmHVWN0rjn8IXMBltM8c84-DMIZ3KU_F3P6xMYzzkzWn8HsIN_5XrKWFZPQ_wu';
+        // Base64-encode the mail and make it URL-safe
+        // (replace all '+' with '-' and all '/' with '_')
+        var encodedMail = btoa([
+          'From: sender@gmail.com\r\n',
+          'To: dev.mikev@gmail.com\r\n',
+          'Subject: Subject Text\r\n\r\n',
+
+          'Message Text'
+        ].join('')).replace(/\+/g, '-').replace(/\//g, '_');
+
+        $.ajax({
+          method: 'POST',
+          url: 'https://www.googleapis.com/gmail/v1/users/me/messages/send',
+          headers: {
+            'Authorization': 'Bearer ' + accessToken,
+            'Content-Type': 'application/json'
+          },
+          data: JSON.stringify({
+            'raw': encodedMail
+          })
+        });
+
+        console.log('Email sent!')
       }
 
       /**
