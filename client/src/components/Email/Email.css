@@ -1,0 +1,12 @@
+.email-form {
+  border: 1px solid black;
+  border-radius: 5%;
+  margin: auto;
+  padding: 15px;
+  max-width: 250px;
+  min-width: 210px;
+}
+
+.email-form button {
+  margin-top: 10px;
+}
